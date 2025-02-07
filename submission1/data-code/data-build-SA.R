@@ -1,3 +1,11 @@
+#preliminaries
+install.packages("readr")
+install.packages("dplyr")
+install.packages("tidyverse")
+
+library(tidyverse)
+library(readr)
+
 service.area <- read_csv("data/input/MA_Cnty_SA_2015_01.csv",skip=1,
                           col_names=c("contractid","org_name","org_type","plan_type","partial","eghp",
                                       "ssa","fips","county","state","notes"),
@@ -13,6 +21,8 @@ service.area <- read_csv("data/input/MA_Cnty_SA_2015_01.csv",skip=1,
                             county = col_character(),
                             notes = col_character()
                           ), na='*')
+
+#mounth/year columns                    
 service.year <- service.area %>%
   mutate(year=2015) %>%
   group_by(state, county) %>%
@@ -20,9 +30,12 @@ service.year <- service.area %>%
   group_by(contractid) %>%
   fill(plan_type, partial, eghp, org_type, org_name)
   
-## Collapse to contract/fips/year unit of observation
+## filling in missing fips
 service.year <- service.year %>%
   group_by(contractid, fips) %>%
   mutate(id_count=row_number()) %>%
   filter(id_count==1) %>%
   select(-c(id_count))
+
+## save to output
+write_rds(service.year, "data/output/service.year.rds")

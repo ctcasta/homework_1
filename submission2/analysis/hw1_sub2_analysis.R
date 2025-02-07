@@ -28,4 +28,4 @@ final_data <- final_plans %>%
     filter(!is.na(enrollment))
 
 rm(list=c("full_ma_data", "contract_service_area", "final_data"))
-save.image("submission_2/results/hwk1_workspace.Rdata")
+save.image("submission2/results/hwk1_workspace.Rdata")
